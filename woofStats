@@ -1,0 +1,309 @@
+import java.io.*;
+import java.util.*;
+import java.awt.Canvas;
+import java.awt.Graphics;
+import java.awt.Image;
+import javax.imageio.*;
+import javax.swing.*;
+public class woofStats extends Canvas {
+
+    static Scanner cin = new Scanner(System.in); //initialize global Scanner for user input
+
+    public static void main(String [] args) {
+
+        //initialize graphics canvas
+        woofStats BowWow = new woofStats();
+        JFrame f = new JFrame();
+        f.setSize(400,400);
+        f.add(BowWow);
+
+        //import txt file of dog and cat data
+        String fileName0 = "woofstats.txt";
+        Scanner fin = null;
+        try { fin = new Scanner(new File(fileName0)); }
+        catch(Exception ex) {System.out.println(ex); System.exit(1); }
+
+        List<Dog> dogs = new ArrayList<>();
+        List<Cat> cats = new ArrayList<>();
+
+        //scan imported txt file and add each cat and dog to their respective ArrayList
+        while (fin.hasNextLine()) {
+            for (int i = 0; i < 29; i++) {
+                String name = fin.nextLine();
+                name.toLowerCase();
+                
+                String breed = fin.nextLine();
+                breed.toLowerCase();
+                
+                int age = Integer.parseInt(fin.nextLine());
+                
+                int weight = Integer.parseInt(fin.nextLine());
+                
+                Dog dog = new Dog(name, breed, age, weight);
+                dogs.add(dog);
+            } //for
+            for (int i = 0; i < 4; i++) {
+                String name = fin.nextLine();
+                name.toLowerCase();
+                
+                String breed = fin.nextLine();
+                breed.toLowerCase();
+                
+                int age = Integer.parseInt(fin.nextLine());
+                
+                int weight = Integer.parseInt(fin.nextLine());
+                
+                Cat cat = new Cat(name, breed, age, weight);
+                cats.add(cat);
+            } //for
+        } //while
+
+        fin.close();
+
+        //menu for database operations
+        int option = 1;
+        while (option != 0) {
+            System.out.println("Pet stats database operations\n1. Display all dogs and tally how many are in the database\n2. Display all cats and tally how many are in the database");
+            System.out.println("3. Print all dogs with age greater than k\n4. Print all cats with age greater than k\n5. Sort dogs by breed\n6. Sort cats by breed");
+            System.out.println("7. Update the age of a dog\n8. Update the age of a cat\n9. Add a dog to the database\n10. Add a cat to the database");
+            System.out.println("Select an option (1-10, 0-quit)?");
+            option = cin.nextInt();
+            switch (option) {
+                case 1:
+                    System.out.println("Dogs in database: ");
+                    printDogs(dogs);
+                    System.out.println("Number of dogs in database: " + dogs.size());
+                    break;
+                case 2:
+                    System.out.println("Cats in database: ");
+                    printCats(cats);
+                    System.out.println("Number of cats in database: " + cats.size());
+                    break;
+                case 3:
+                    ageDisplayD(dogs);
+                    break;
+                case 4:
+                    ageDisplayC(cats);
+                    break;
+                case 5:
+                    Collections.sort(dogs, Dog.breedComp);
+                    System.out.println("Your sorted database of dogs based on breed: ");
+                    printDogs(dogs);
+                    break;
+                case 6:
+                    Collections.sort(cats, Cat.breedComp);
+                    System.out.println("Your sorted database of cats based on breed: ");
+                    printCats(cats);
+                    break;
+                case 7:
+                    updateAgeD(dogs);
+                    break;
+                case 8:
+                    updateAgeC(cats);
+                    break;
+                case 9:
+                    addDog(dogs, f);
+                    break;
+                case 10:
+                    addCat(cats);
+                    break;
+                default:
+                    System.out.println("Error, please select a valid option");
+                    break;
+            } //switch
+        } //while
+        System.out.println("bye!");
+    } //main
+
+    /*
+    @function: ageDisplayD()
+    @purpose: displays all dogs with an age older than a desired value k
+    @effects: takes user input, searches through all dogs and prints dogs with age > k
+    @notes:
+    */
+    public static void ageDisplayD(List<Dog>dogs) {
+        System.out.println("Enter the value k for which all dog ages should be greater than? (i.e: 7)");
+        
+        int k = cin.nextInt();
+        
+        List <Dog> ageList = new ArrayList<>();
+
+        for (Dog w : dogs) {
+            if (k < w.getAge()) {
+                ageList.add(w);
+            } //if
+        } //for
+
+        System.out.println("Dogs with age greater than " + k + " : ");
+        printDogs(ageList);
+    } //ageDisplayD
+
+    /*
+    @function: ageDisplayC()
+    @purpose: displays all cats with an age older than a desired value k
+    @effects: takes user input, searches through all cats and prints cats with age > k
+    @notes:
+     */
+    public static void ageDisplayC(List<Cat>cats) {
+        System.out.println("Enter the value k for which all cat ages should be greater than? (i.e 7)");
+        
+        int k = cin.nextInt();
+        
+        List <Cat> ageList = new ArrayList<>();
+
+        for (Cat w : cats) {
+            if (k < w.getAge()) {
+                ageList.add(w);
+            } //if
+        } //for
+
+        System.out.println("Cats with age greater than " + k + " : ");
+        printCats(ageList);
+    } //ageDisplayC
+
+    /*
+    @function: updateAgeD()
+    @purpose: update the age of a desired dog
+    @effects: takes user input, reassigns dog age, and prints updated dog list
+    @notes: utilizes set() method
+     */
+    public static void updateAgeD(List<Dog>dogs) {
+        System.out.println("Enter the name of the dog whose age you'd like to update ? (i.e. Sparky)");
+        
+        String seekName = cin.next();
+        seekName.toLowerCase();
+
+        for (Dog w : dogs) {
+            if (seekName.equals(w.name)) {
+                System.out.println("Enter the value of the updated age ? (i.e. 10)");
+                int newAge = cin.nextInt();
+                w.setAge(newAge);
+            } //if
+        } //for
+
+        System.out.println("Your list of dogs with " + seekName + "'s age updated: ");
+        printDogs(dogs);
+    } //updateAgeD
+
+    /*
+    @function: updateAgeC()
+    @purpose: update the age of a desired cat
+    @effects: takes user input, reassigns cat age, and prints updated cat list
+    @notes: utilizes set() method
+     */
+    public static void updateAgeC(List<Cat>cats) { //update the age of a cat
+        System.out.println("Enter the name of the cat whose age you'd like to update ? (i.e. Meowy");
+        
+        String seekName = cin.next();
+        seekName.toLowerCase();
+
+        for (Cat w : cats) {
+            if (seekName.equals(w.name)) {
+                System.out.println("Enter the value of the updated age ? (i.e. 8)");
+                int newAge = cin.nextInt();
+                w.setAge(newAge);
+            } //if
+        } //for
+
+        System.out.println("Your list of cats with " + seekName + "'s age updated: ");
+        printCats(cats);
+    } //updateAgeC
+
+    /*
+    @function: paint()
+    @purpose: displays image graphics
+    @effects: imports image jpg file and draws image on canvas
+    @notes: utilizes ImageIO package
+     */
+    public void paint(Graphics g) {
+        Image doggo = null;
+
+        try {
+            doggo = ImageIO.read(new File("WoofWoofImADog.jpg"));
+        } catch (Exception e) { System.out.println(e);}
+
+        g.drawImage(doggo, 0, 0, this);
+    } //paint
+
+    /*
+    @function: addDog()
+    @purpose: add a new dog to database
+    @effects: takes user input, updates database with new dog, & prints updated dog list
+    @notes: 
+     */
+    public static void addDog(List<Dog>dogs, JFrame f) { 
+        System.out.println("Enter the dog name, breed, age, and weight of the dog you'd like to add to your database ?" +
+                "\n Please enter with spaces between each (in this format: Sparky Poodle 8 14)");
+        
+        String name = cin.next();
+        name.toLowerCase();
+        
+        String breed = cin.next();
+        breed.toLowerCase();
+        
+        int age = cin.nextInt();
+        
+        int weight = cin.nextInt();
+        
+        Dog dog = new Dog(name, breed, age, weight);
+        dogs.add(dog);
+        
+        f.setVisible(true); //makes canvas visible
+        
+        System.out.println("Your updated database of dogs: ");
+        printDogs(dogs);
+        System.out.println("Number of dogs in database: " + dogs.size());
+    } //addDog
+
+    /*
+    @function: addCat()
+    @purpose: add a new cat to database
+    @effects: takes user input, reassigns dog age, and prints updated dog list
+    @notes: 
+     */
+    public static void addCat(List<Cat>cats) { //update the list of cats
+        System.out.println("Enter the cat name, breed, age, and weight of the cat you'd like to add to your database ?" +
+                "\n Please enter with spaces between each (in this format: Fluffy Siamese 5 12)");
+        
+        String name = cin.next();
+        name.toLowerCase();
+        
+        String breed = cin.next();
+        breed.toLowerCase();
+        
+        int age = cin.nextInt();
+        
+        int weight = cin.nextInt();
+        
+        Cat cat = new Cat(name, breed, age, weight);
+        cats.add(cat);
+        
+        System.out.println("Your updated database of cats: ");
+        printCats(cats);
+        System.out.println("Number of cats in database: " + cats.size());
+    } //addCat
+
+    /*
+    @function: printDogs()
+    @purpose: prints itemized dog list 
+    @effects: prints each item in ArrayList on new line
+    @notes: 
+     */
+    public static void printDogs(List<Dog>dogs) { 
+        for (Object pet : dogs) {
+            System.out.println(pet);
+        } //for
+    } //printDogs
+
+    /*
+    @function: printCats()
+    @purpose: prints itemized cat list 
+    @effects: prints each item in ArrayList on new line
+    @notes: 
+     */
+    public static void printCats(List<Cat>cats) { //prints each dog in list on a new line
+        for (Object pet : cats) {
+            System.out.println(pet);
+        } //for
+    } //printCats
+} //class
