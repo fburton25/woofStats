@@ -1,3 +1,10 @@
+/*
+Authors: Frances Burton and Kennedy Hilario
+12/10/22
+
+woofStats main class
+*/
+
 import java.io.*;
 import java.util.*;
 import java.awt.Canvas;
