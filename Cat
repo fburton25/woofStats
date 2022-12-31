@@ -1,2 +1,74 @@
+/*
+Authors: Frances Burton and Kennedy Hilario
+12/10/22
 
+class Cat
+*/
 
+class Cat {
+    public String name; //cat name
+
+    public String breed; //cat breed
+
+    public int age; //cat age
+
+    public int weight; //cat weight (in pounds)
+
+    /*
+    @function: Cat()
+    @purpose: initializes Cat class
+    @effects: assigns name, breed, age, and weight to Cat
+    @notes: utilizes this() method
+     */
+    public Cat(String name, String breed, int age, int weight) {
+        this.name = name;
+        this.breed = breed;
+        this.age = age;
+        this.weight = weight;
+
+        name.toLowerCase();
+        breed.toLowerCase();
+    } //Cat
+
+    /*
+    @function: equals()
+    @purpose: allows for searching dog ArrayList for duplicate names
+    @effects: checks each item in ArrayList to see if it is equal
+    @notes: boolean
+     */
+    public boolean equals(Object ob) {
+        if (ob != null && ob instanceof Cat) {
+            Cat w = (Cat) ob;
+            return name.equals(w.name);
+        } //if
+        return false;
+    }//equals
+
+    /*
+    @function: breedComp()
+    @purpose: allows for comparing cat breeds in ArrayList
+    @notes: utilizes comparator interface
+     */
+    public static Comparator<Cat> breedComp = new Comparator<>() {
+        public int compare(Cat X, Cat Y) {
+            return X.breed.compareTo(Y.breed);
+        } //compare
+    }; //breedComp
+
+    /*
+   @function: toString()
+   @purpose: prints Dog class parameters in proper order
+   @notes:
+    */
+    public String toString() {
+        return name + ", " + breed + ", " + age + " years old, " + weight + " lbs";
+    } //toString
+
+    public int getAge() {
+        return age;
+    } //getAge
+
+    public void setAge(int age) {
+        this.age = age;
+    } //setAge
+} //class Cat
