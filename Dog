@@ -1,3 +1,10 @@
+/*
+Authors: Frances Burton and Kennedy Hilario
+12/10/22
+
+class Dog
+*/
+
 class Dog {
     public String name; //dog name
 
